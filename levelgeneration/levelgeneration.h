@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <random>
 
 #define STANDARD_ROOM_SIZE 50
 
@@ -38,9 +39,12 @@ class LevelFloor
 {
     private:
         LevelRoom starting_room;
+        // reference to a random number generator that will be used to generate the floor
+        std::mt19937 & rng;
+        uint8_t floor_num;
 
     public:
-        LevelFloor();
+        LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number);
 };
 
 

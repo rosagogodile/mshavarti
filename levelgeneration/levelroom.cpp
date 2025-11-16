@@ -10,12 +10,9 @@
 /* Constructor for `LevelRoom`
  * Initializes the matrix of tile data, and that's about it
  */
-LevelRoom::LevelRoom()
+LevelRoom::LevelRoom() : num_connections(0), empty_conections(4)
 {
     using namespace std;
-
-    num_connections = 0;
-    empty_conections = 4;
     
     // initialize tile data
     // link to remind me how to do this bc im lowkey buns as c++:

@@ -87,7 +87,7 @@ MATRIX<uint8_t> LevelFloor::Random_Walk()
 
     // find matrix bounds
     // used to allocate enough memory for the matrix
-    Par<int16_t> bounds(0,0);
+    Pair<int16_t> bounds(0,0);
 
     for (const auto & p : marked_coordinates)
     {
@@ -98,9 +98,9 @@ MATRIX<uint8_t> LevelFloor::Random_Walk()
     }
 
     // allocate memory for the matrix
-    MATRIX<uint8_t> minimap = new unique_ptr<uint8_t[]>[bounds.x1];
+    MATRIX<uint8_t> minimap(new unique_ptr<uint8_t[]>[bounds.x1]);
 
-    for (int16_t i = 0; i < bounds.x1 ++i)
+    for (int16_t i = 0; i < bounds.x1; ++i)
     {
         minimap[i] = std::make_unique<uint8_t[]>(bounds.x2);
     }

@@ -64,4 +64,62 @@ MATRIX<uint8_t> LevelFloor::Random_Walk()
     }
 
     // construct minimap matrix
+
+    // find value to shift all marked coordinates by
+    // needd bc some coordinates will potentially be negative
+    Pair<int16_t> shifter = marked_coordinates.at(0);
+
+    for (const auto & p : marked_coordinates)
+    {
+        if (p.x1 < shifter.x1)
+            shifter.x1 = p.x1;
+        if (p.x2 < shifter.x2)
+            shifter.x2 = p.x2;
+    }
+    shifter.x1 = (shifter.x1 < 0) ? -1 * shifter.x1 : 0;
+    shifter.x2 = (shifter.x2 < 0) ? -1 * shifter.x2 : 0;
+
+    // shift all marked coordinates
+    for (auto & p : marked_coordinates)
+    {
+        p += shifter;
+    }
+
+    // find matrix bounds
+    // used to allocate enough memory for the matrix
+    Par<int16_t> bounds(0,0);
+
+    for (const auto & p : marked_coordinates)
+    {
+        if (p.x1 > bounds.x1)
+            bounds.x1 = p.x1;
+        if (p.x2 > bounds.x2)
+            bounds.x2 = p.x2;
+    }
+
+    // allocate memory for the matrix
+    MATRIX<uint8_t> minimap = new unique_ptr<uint8_t[]>[bounds.x1];
+
+    for (int16_t i = 0; i < bounds.x1 ++i)
+    {
+        minimap[i] = std::make_unique<uint8_t[]>(bounds.x2);
+    }
+
+    // fill matrix with 0s
+    for (int16_t i = 0; i < bounds.x1; ++i)
+    {
+        for (int16_t j = 0; j < bounds.x2; ++j)
+        {
+            minimap[i][j] = 0;
+        }
+    }
+
+    // set all marked coordinates to 1 in the matrix
+    for (const auto & p : marked_coordinates)
+    {
+        minimap[p.x1][p.x2] = 1;
+    }
+
+
+    return minimap;
 }

@@ -51,8 +51,8 @@ class Pair
         // addition operator overloads: https://en.cppreference.com/w/cpp/language/operators.html
         Pair<T> & operator+=(const Pair<T> & rhs)
         {
-            this.x1 += rhs.x1;
-            this.x2 += rhs.x2;
+            this->x1 += rhs.x1;
+            this->x2 += rhs.x2;
 
             return *this;
         }
@@ -65,6 +65,8 @@ class Pair
 
 /* Function that determines which of two pairs are further to the left
  * returns true if `lhs` is further left than `rhs`
+ * This function was initially planned to be used for something, but as of now I don't think it's necessary
+ * Leaving it in the code just in case.
  */
 template <typename T>
 bool further_left(const Pair<T> & lhs, const Pair<T> & rhs)

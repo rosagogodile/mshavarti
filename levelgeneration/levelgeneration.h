@@ -1,6 +1,6 @@
 /* Author:          Rosa Knowles
  * Created:         11/16/2025
- * Last Updated:    11/17/2025
+ * Last Updated:    11/18/2025
  * Description:     Header file for level generation function and class definitions
  */
 
@@ -13,6 +13,7 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #define STANDARD_ROOM_SIZE 50
 
@@ -107,11 +108,14 @@ class LevelFloor
         // reference to a random number generator that will be used to generate the floor
         std::mt19937 & rng;
         uint8_t floor_num;
+        MATRIX<uint8_t> minimap;
+        Pair<int16_t> minimap_size;
 
-        MATRIX<uint8_t> Random_Walk();
+        MATRIX<uint8_t> Random_Walk(Pair<int16_t> & minimap_bounds);
 
     public:
         LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number);
+        std::string minimap_str() const;
 };
 
 

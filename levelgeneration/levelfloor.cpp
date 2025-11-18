@@ -1,6 +1,6 @@
 /* Author:          Rosa Knowles
  * Created:         11/16/2025
- * Last Updated:    11/17/2025
+ * Last Updated:    11/18/2025
  * Description:     File that contains implementations for the class `LevelFloor` defined in `levelgeneration.h`
  */
 
@@ -12,14 +12,17 @@
  * Calls all generation functions needed to generate the floor
  */
 LevelFloor::LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number): rng(rng_ref), floor_num(floor_number) 
-{}
+{
+    minimap = Random_Walk(minimap_size);
+}
 
 
 /* Function that returns a matrix from the random walk algorithm
  * https://www.geeksforgeeks.org/python/random-walk-implementation-python/
  * Used to generate the skeleton of the dungeon map, some other rooms and stuff will be added on after this
+ * Takes a reference to a pair of integers, used to store the bounds of the minimap
  */
-MATRIX<uint8_t> LevelFloor::Random_Walk()
+MATRIX<uint8_t> LevelFloor::Random_Walk(Pair<int16_t> & minimap_bounds)
 {
     using namespace std;
 
@@ -60,7 +63,8 @@ MATRIX<uint8_t> LevelFloor::Random_Walk()
                 break;
         }
 
-        marked_coordinates.push_back(current_position);
+        Pair<int16_t> temp(current_position.x1, current_position.x2);
+        marked_coordinates.push_back(temp);
     }
 
     // construct minimap matrix
@@ -117,9 +121,30 @@ MATRIX<uint8_t> LevelFloor::Random_Walk()
     // set all marked coordinates to 1 in the matrix
     for (const auto & p : marked_coordinates)
     {
-        minimap[p.x1][p.x2] = 1;
+        //minimap[p.x1][p.x2] = 1;
     }
 
-
+    minimap_bounds.x1 = bounds.x1;
+    minimap_bounds.x2 = bounds.x2;
     return minimap;
+}
+
+/* Function that returns a minimap as a string representation of itself
+ */
+std::string LevelFloor::minimap_str() const
+{
+    using namespace std;
+
+    string rtrnval = "";
+
+    for (int16_t i = 0; i < minimap_size.x1; ++i)
+    {
+        for (int16_t j = 0; j < minimap_size.x2; ++j)
+        {
+            rtrnval += to_string(minimap[i][j]);
+        }
+        rtrnval += "\n";
+    }
+
+    return rtrnval;
 }

@@ -30,10 +30,6 @@
 // setup this way so i can easily change it later if needed
 typedef uint8_t TILE_ID;
 
-// type that allows me to define a smart pointer for a dynamically allocated matrix
-// without wanting to blow my fucking brains out 
-template <typename T> using MATRIX = std::unique_ptr<std::unique_ptr<T[]>[]>;
-
 
 
 /* Incredibly basic template class that stores a pair of values
@@ -64,6 +60,85 @@ class Pair
         }
 };
 
+/* Template class that stores a 2d matrix
+ * Used so I don't have to deal with the "Rule of Fives" for each class here that needs a matrix
+ */
+template <typename T>
+class Matrix2D
+{
+    private:
+        T ** data;
+        uint16_t w;
+        uint16_t h;
+
+    public: 
+        // constructor
+        Matrix2D(uint16_t width, uint16_t height)
+        {
+            w = width;
+            h = height;
+
+            data = new T * [width];
+            for (uint16_t i = 0; i < width; ++i)
+            {
+                data[i] = new T[height];
+            }
+        }
+
+        // destructor 
+        ~Matrix2D()
+        {
+            // delete each column before deleting the entire matrix
+            for (uint16_t i = 0; i < w; ++i)
+            {
+                delete[] data[i];
+            }
+            delete[] data;
+        }
+
+        // getters
+        uint16_t get_width()  {return w;}
+        uint16_t get_height() {return h;}
+
+        /* Function that converts the matrix to a raw pointer
+         * Instead of returning the raw pointer defined in the class, this function returns a copy of it 
+         */
+        T ** as_pointer()
+        {
+            // allocate memory for the copy
+            T ** temp = new T * [w];
+            for (uint16_t i = 0; i < w; ++i)
+            {
+                temp[i] = new T[h];
+            }
+
+            // perform the copy
+            for (uint16_t i = 0; i < w; ++i)
+            {
+                for (uint16_t j = 0; j < h; ++j)
+                {
+                    temp[i][j] = data[i][j];
+                }
+            }
+
+            return temp;
+        }
+
+        /* Function that fills the matrix with a specified value
+         */
+        void fill(T fillval)
+        {
+            for (uint16_t i = 0; i < w; ++i)
+            {
+                for (uint16_t j = 0; j < h; ++j)
+                {
+                    data[i][j] = fillval;
+                }
+            }
+        }
+
+};
+
 /* Function that determines which of two pairs are further to the left
  * returns true if `lhs` is further left than `rhs`
  * This function was initially planned to be used for something, but as of now I don't think it's necessary
@@ -86,7 +161,7 @@ class LevelRoom
         uint8_t num_connections;
         uint8_t empty_conections;
 
-        MATRIX<TILE_ID> tile_data;
+        TILE_ID ** tile_data;
 
         std::shared_ptr<LevelRoom> north;
         std::shared_ptr<LevelRoom> south;
@@ -108,10 +183,10 @@ class LevelFloor
         // reference to a random number generator that will be used to generate the floor
         std::mt19937 & rng;
         uint8_t floor_num;
-        MATRIX<uint8_t> minimap;
-        Pair<int16_t> minimap_size;
+        uint8_t ** minimap;
+        Pair<int16_t> minimap_bounds;
 
-        MATRIX<uint8_t> Random_Walk(Pair<int16_t> & minimap_bounds);
+        uint8_t ** Random_Walk();
 
     public:
         LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number);

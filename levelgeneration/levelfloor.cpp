@@ -13,7 +13,7 @@
  */
 LevelFloor::LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number): rng(rng_ref), floor_num(floor_number) 
 {
-    minimap = Random_Walk(minimap_size);
+    minimap = Random_Walk();
 }
 
 
@@ -22,7 +22,7 @@ LevelFloor::LevelFloor(std::mt19937 & rng_ref, uint8_t floor_number): rng(rng_re
  * Used to generate the skeleton of the dungeon map, some other rooms and stuff will be added on after this
  * Takes a reference to a pair of integers, used to store the bounds of the minimap
  */
-MATRIX<uint8_t> LevelFloor::Random_Walk(Pair<int16_t> & minimap_bounds)
+MATRIX<uint8_t> LevelFloor::Random_Walk()
 {
     using namespace std;
 
